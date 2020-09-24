@@ -1,0 +1,105 @@
+CS444 hw2 Solution
+With optional parts: table-driven system calls, return value 
+of system call supported and printed out in shutdown report.
+Also, debug logging to memory is implemented: see debug_log()
+in tunix.c.
+
+Shared between user and kernel:
+
+   tty_public.h: TTY device numbers
+   tsyscall.h: syscall numbers (like UNIX sys/syscall.h)
+
+Kernel files:
+
+   tsystm.h: syscall dispatch, kernel fn protos (like UNIX sys/systm.h)
+   startup0.s: same as $pclibsrc/startup0.s.  Sets up stack, calls
+        into startup1.c
+   startup1.c: Same as $pclibsrc/startup.c, but calls your kernel
+        initialization routine instead of main.
+   tunix.c:  main kernel code: init, system call dispatch, shutdown
+   sysentry.s: system call trap handler assembly envelope.  Calls syscallc.
+   io.h, io.c, ioconf.h, ioconf.c: device-independent io system
+   tty.c, tty.h, tty_public.h:  tty driver from hw1, almost unchanged,
+                                   (now tty.c does some debug_log calls)
+
+User-level files:
+
+   tunistd.h: syscall prototypes (like UNIX unistd.h)
+   test1.c:  has main(). User program.
+   ulib.s:  library routines for syscalls: _read, _write, _exit
+   crt0.s:  user-level "C startup module"  calls _main,
+  	does exit syscall.  Entry point _ustart.
+
+test1.sh: provided shell script for automatic run, with input
+test1.script: script from run of system, showing debug log output
+makefile:  make U=test1    makes test1.lnx for user program test1.c
+
+----------------------------------------------------------------
+
+
+# README
+Group: Daniel Werminghausen, Sajana Wijesinghe (4/16/19)
+
+hw2 Files from hw2 solutions :
+tty_public.h: no change
+
+tsyscall.h: no change
+
+ioconf.h: no change
+
+tty.h: no change
+
+tsytem.h: no change
+
+startup0.s: no change
+
+startup1.c no change
+
+sysentry.s: no change
+
+io.c: no change
+
+iconf.c: no change
+
+tunistd.h: no change
+
+uprog.c no change
+
+ulibs.s no change
+
+-----------------------------------------------------------------
+tty.c: terminal driver, from hw2 but changed to block, unblock (sleep/wakeup)
+
+asmswitch.s: given
+
+tunix.c: extern ustart1/ustart2/ustart3 and schedulue. 
+new functions added to tunix from hw2 solutions. process_table(), processzero().
+typedef enum process_number created for 3 users programs of uprog initialized  SAVED_ESP and SAVED_PC
+to process all 3 user programs. Many meathods used from proc.h
+
+proc.h: esp1, esp2, esp3 memory locations initalized for exit codoes of uprog1.c / uprog2.c / uprog3.c
+
+sched.c: schedule function
+loop through the process entry table until you find a RUN user process (1, then 2, then 3) 
+and then call asmswtch.s with old-process = process 0, new-process = proc 1, to switch from proc 0 
+to proc 1, thus running uprog1. Later, when proc 1 exits, sysexit calls the scheduler again
+
+sleep function 
+when ttywrite encounters a full output buffer, it blocks the process by calling a function, sleep(OUTPUT), 
+in the scheduler(status changed from RUN to BLOCKED).
+
+wakeup function
+a wakeup(OUTPUT) function is invoked which will run the processes that have been blocked 
+on waitcode=OUTPUT (status changed from BLOCKED to RUN)
+
+Sched.h: functions schedule, wakeup, sleep initalized. 
+
+
+crt01.s   same as crt0.s from hw2 solutions but main = main1 and _ustart1
+crt02s    same as crt0.s from hw2 solutions but main = main2 and _ustart2
+crt03.s   same as crt0.s from hw2 solutions but main = main2 and _ustart3
+
+uprog1.c  given 
+uprog2.c  given
+uprog3.c  given
+----------------------------------------------------------------
