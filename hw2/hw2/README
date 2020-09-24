@@ -1,0 +1,46 @@
+********************************************************************
+Group: Daniel Werminghausen, Sajana Wijesinghe     (3/21/19)
+typescript of test1.c called "test1.c_tutor.script" in hw2 dir
+
+tty_public.h: stayed the same
+
+tsyscall.h: defining read, write, and exit by looking at /usr/include/sys/syscall.h
+
+ioconf.h: changed read and write to sysread, ryswrite like instructed
+
+tty.h: stays the sameq
+
+tsytem.h: given to us in hw2 dir
+
+startup0.s: same as pclibsrc/startup0.s.  
+
+startup1.c basically the same as pclibsrc/startup.c
+
+tunix.c: Include all header files,  put all external functions in and then function defined 
+in the tunix code. new functions (k_init calling ioinit and set_trap_gate(0x80,&st=yscall) and calls ustart() from crt0.s) (Set_trap_gate function for set trap gate for intr gate and adding the line 
+desc->flags = GATE_P|GATE_DPL_KERNEL|GATE_INTGATE;
+Replaced by
+desc->flags = GATE_P|GATE_DPL_KERNEL|GATE_TRAPGATE;
+$pclibsrc/cpureg.S)
+(function sycallc with switch statment over the various different syscalls,
+case for exit = 1, write = 4 and read = 3)
+(function sysexit which will do some prints and exit with exit code 0 and return to tutor)
+
+sysentry.s: assembly envelope routine like in class slides. push edx, ecx, ebx, eax, 
+call syscallc and pop eax, ebx, ecx, edx
+
+io.c renamed read and white to sysread, sywrite
+
+iconf.c, ioconf.h from hw1
+
+tty.c, tyy.h, tyy_public.h unchanged 
+
+tunistd.h: /usr/include/unistd.h 
+
+uprog.c the same as testio.c but ldev set to TTY1;
+
+ulibs.s Write function given, read function the same as write, exit the same but only one 
+argument
+
+test1.c Similar to testio.c, a shorter version of it, ldev =TTY1;
+3 writes and 1 read test
